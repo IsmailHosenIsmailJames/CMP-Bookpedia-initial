@@ -80,6 +80,14 @@ private fun BookListScreen(
     lazyListStateSearch.animateScrollToItem(0)
   }
 
+  LaunchedEffect(state.selectedIndexTab) {
+    pagerState.animateScrollToPage(state.selectedIndexTab)
+  }
+
+  LaunchedEffect(pagerState.currentPage) {
+    onActions(BookListActions.OnTabSelect(pagerState.currentPage))
+  }
+
   Column(
     modifier = Modifier.fillMaxSize()
       .background(color = DarkBlue)
@@ -105,7 +113,7 @@ private fun BookListScreen(
       color = DesertWhite,
       shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
     ) {
-     Column {
+      Column {
         TabRow(
           selectedTabIndex = state.selectedIndexTab,
           modifier = Modifier.padding(12.dp).widthIn(600.dp).fillMaxWidth(),
@@ -114,7 +122,8 @@ private fun BookListScreen(
               color = SandYellow,
               modifier = Modifier.tabIndicatorOffset(currentTabPosition = it[state.selectedIndexTab]),
             )
-          }) {
+          },
+        ) {
           Tab(
             selected = state.selectedIndexTab == 0,
             modifier = Modifier.weight(1f),
@@ -127,7 +136,9 @@ private fun BookListScreen(
           Tab(
             selected = state.selectedIndexTab == 0,
             modifier = Modifier.weight(1f),
-            onClick = { onActions(BookListActions.OnTabSelect(1)) },
+            onClick = {
+              onActions(BookListActions.OnTabSelect(1))
+            },
             enabled = true,
             text = { Text(text = stringResource(Res.string.favorite)) },
             selectedContentColor = SandYellow,
@@ -135,7 +146,7 @@ private fun BookListScreen(
           )
         }
         HorizontalPager(
-          state = pagerState, modifier = Modifier.fillMaxSize()
+          state = pagerState, modifier = Modifier.fillMaxSize(),
         ) { pageIndex ->
           Box(
             contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
