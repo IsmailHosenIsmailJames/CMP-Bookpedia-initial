@@ -1,46 +1,73 @@
 package com.plcoding.bookpedia.book.presentation.book_list.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cmp_bookpedia.composeapp.generated.resources.Res
+import cmp_bookpedia.composeapp.generated.resources.book_error_2
 import coil3.compose.rememberAsyncImagePainter
 import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.book.presentation.book_list.BookListActions
 import com.plcoding.bookpedia.core.presentation.LightBlue
+import com.plcoding.bookpedia.core.presentation.SandYellow
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.math.round
 
 @Composable
 fun BookListItem(book: Book, onBookClick: (book: Book) -> Unit, modifier: Modifier) {
   Surface(
-    modifier = modifier.background(
-      color = LightBlue.copy(alpha = 0.2f),
-      shape = RoundedCornerShape(8.dp)
-    ).clickable(
-      onClick = {
-        onBookClick(book)
-      }
-    )
+    shape = RoundedCornerShape(8.dp),
+    modifier =
+      modifier
+        .background(color = LightBlue.copy(alpha = 0.2f))
+        .clickable(
+          onClick = {
+            onBookClick(book)
+          }
+        )
   ) {
     Row(
-      modifier = Modifier.padding(10.dp).fillMaxWidth().height(IntrinsicSize.Min)
+      modifier = Modifier.padding(10.dp).fillMaxWidth().height(IntrinsicSize.Min),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically
     ) {
-      Box() {
+      Box(
+        modifier = Modifier.height(100.dp)
+      ) {
         var imageLoadResult by remember {
           mutableStateOf<Result<Painter>?>(null)
         }
@@ -59,7 +86,83 @@ fun BookListItem(book: Book, onBookClick: (book: Book) -> Unit, modifier: Modifi
             imageLoadResult = Result.failure(it.result.throwable)
           }
         )
+        when (val result = imageLoadResult) {
+          null -> CircularProgressIndicator()
+          else -> {
+            Image(
+              painter =
+                if (result.isSuccess) imagePainter
+                else painterResource(Res.drawable.book_error_2),
+              contentDescription = book.title,
+              contentScale =
+                if (result.isSuccess) ContentScale.Crop
+                else ContentScale.Fit,
+              modifier = Modifier.aspectRatio(
+                ratio = 0.65f,
+                matchHeightConstraintsFirst = true
+              )
+            )
+          }
+        }
       }
+      Spacer(modifier = Modifier.width(10.dp))
+      Column(
+        modifier = Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.Center
+      ) {
+        Text(
+          book.title,
+          style = MaterialTheme.typography.titleMedium,
+          maxLines = 2,
+          overflow = TextOverflow.Ellipsis
+        )
+        book.authors?.firstOrNull().let { author ->
+          if (author != null) {
+            Text(
+              text = author,
+              style = MaterialTheme.typography.bodyMedium,
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis
+            )
+          }
+        }
+        book.averageRating?.let { rating ->
+          Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+          ) {
+            Text(
+              text = (round(rating * 10) / 10.0).toString(),
+              style = MaterialTheme.typography.bodyMedium,
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Icon(
+              Icons.Default.Star,
+              contentDescription = "Ratings",
+              tint = SandYellow
+            )
+          }
+        }
+      }
+      Icon(Icons.AutoMirrored.Default.KeyboardArrowRight, contentDescription = null)
     }
   }
+}
+
+@Preview
+@Composable
+fun BookListItemPreview() {
+  BookListItem(
+    book = Book(
+      id = " 1",
+      title = "Book",
+      imageUrl = "",
+      ratingsCount = 100,
+      averageRating = 4.6,
+      authors = listOf("Ismail Hosen James")
+    ),
+    onBookClick = {},
+    modifier = Modifier
+  )
 }
