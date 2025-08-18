@@ -21,6 +21,7 @@ import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.clear_search
 import cmp_bookpedia.composeapp.generated.resources.search_hint
 import com.plcoding.bookpedia.core.presentation.DarkBlue
+import com.plcoding.bookpedia.core.presentation.DesertWhite
 import com.plcoding.bookpedia.core.presentation.SandYellow
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -48,6 +49,8 @@ fun BookSearchBar(
     colors = OutlinedTextFieldDefaults.colors(
       focusedBorderColor = SandYellow,
       cursorColor = DarkBlue,
+      focusedContainerColor = DesertWhite,
+      unfocusedContainerColor = DesertWhite
     ),
     shape = RoundedCornerShape(100),
     singleLine = true,

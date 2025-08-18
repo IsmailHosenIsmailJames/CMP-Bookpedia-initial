@@ -26,7 +26,6 @@ fun BookList(
 ) {
   LazyColumn(
     modifier = modifier,
-    verticalArrangement = Arrangement.spacedBy(12.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     items(
@@ -37,7 +36,9 @@ fun BookList(
       BookListItem(
         book = books[book],
         onBookClick = onBookClick,
-        modifier = Modifier.widthIn(max = 700.dp).fillMaxWidth().padding(16.dp)
+        modifier = Modifier.widthIn(max = 700.dp).fillMaxWidth().padding(
+          top = 5.dp, bottom = 5.dp, end = 10.dp, start = 10.dp
+        )
       )
 
     }

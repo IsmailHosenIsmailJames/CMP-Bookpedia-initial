@@ -81,7 +81,9 @@ private fun BookListScreen(
   }
 
   Column(
-    modifier = Modifier.fillMaxSize().background(color = DarkBlue).statusBarsPadding()
+    modifier = Modifier.fillMaxSize()
+      .background(color = DarkBlue)
+      .statusBarsPadding()
       .padding(top = 20.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
@@ -103,70 +105,72 @@ private fun BookListScreen(
       color = DesertWhite,
       shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
     ) {
-      TabRow(
-        selectedTabIndex = state.selectedIndexTab,
-        modifier = Modifier.padding(12.dp).widthIn(600.dp).fillMaxWidth(),
-        indicator = {
-          TabRowDefaults.SecondaryIndicator(
-            color = SandYellow,
-            modifier = Modifier.tabIndicatorOffset(currentTabPosition = it[state.selectedIndexTab]),
+     Column {
+        TabRow(
+          selectedTabIndex = state.selectedIndexTab,
+          modifier = Modifier.padding(12.dp).widthIn(600.dp).fillMaxWidth(),
+          indicator = {
+            TabRowDefaults.SecondaryIndicator(
+              color = SandYellow,
+              modifier = Modifier.tabIndicatorOffset(currentTabPosition = it[state.selectedIndexTab]),
+            )
+          }) {
+          Tab(
+            selected = state.selectedIndexTab == 0,
+            modifier = Modifier.weight(1f),
+            onClick = { onActions(BookListActions.OnTabSelect(0)) },
+            enabled = true,
+            text = { Text(stringResource(Res.string.search_results)) },
+            selectedContentColor = SandYellow,
+            unselectedContentColor = Color.Black.copy(0.5f),
           )
-        }) {
-        Tab(
-          selected = state.selectedIndexTab == 0,
-          modifier = Modifier.weight(1f),
-          onClick = { onActions(BookListActions.OnTabSelect(0)) },
-          enabled = true,
-          text = { Text(stringResource(Res.string.search_results)) },
-          selectedContentColor = SandYellow,
-          unselectedContentColor = Color.Black.copy(0.5f),
-        )
-        Tab(
-          selected = state.selectedIndexTab == 0,
-          modifier = Modifier.weight(1f),
-          onClick = { onActions(BookListActions.OnTabSelect(1)) },
-          enabled = true,
-          text = { Text(text = stringResource(Res.string.favorite)) },
-          selectedContentColor = SandYellow,
-          unselectedContentColor = Color.Black.copy(0.5f),
-        )
-      }
-      HorizontalPager(
-        state = pagerState, modifier = Modifier.fillMaxSize()
-      ) { pageIndex ->
-        Box(
-          contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
-        ) {
-          when (pageIndex) {
-            0 -> {
-              if (state.isLoading) CircularProgressIndicator()
-              if (state.searchResults.isEmpty()) Text(stringResource(Res.string.no_results_found))
-              if (state.errorMessage != null) {
-                Text(state.errorMessage.asString(), color = MaterialTheme.colorScheme.error)
-              } else BookList(
-                modifier = Modifier.fillMaxSize(),
-                scrollState = lazyListStateSearch,
-                books = state.searchResults,
-                onBookClick = {
-                  onActions(BookListActions.OnBookClick(it))
-                },
-              )
-            }
-
-            1 -> {
-              if (state.isLoading) CircularProgressIndicator()
-              if (state.searchResults.isEmpty()) Text(stringResource(Res.string.no_favorite_found))
-              if (state.errorMessage != null) {
-                Text(state.errorMessage.asString(), color = MaterialTheme.colorScheme.error)
-              } else {
-                BookList(
+          Tab(
+            selected = state.selectedIndexTab == 0,
+            modifier = Modifier.weight(1f),
+            onClick = { onActions(BookListActions.OnTabSelect(1)) },
+            enabled = true,
+            text = { Text(text = stringResource(Res.string.favorite)) },
+            selectedContentColor = SandYellow,
+            unselectedContentColor = Color.Black.copy(0.5f),
+          )
+        }
+        HorizontalPager(
+          state = pagerState, modifier = Modifier.fillMaxSize()
+        ) { pageIndex ->
+          Box(
+            contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+          ) {
+            when (pageIndex) {
+              0 -> {
+                if (state.isLoading) CircularProgressIndicator()
+                if (state.searchResults.isEmpty()) Text(stringResource(Res.string.no_results_found))
+                if (state.errorMessage != null) {
+                  Text(state.errorMessage.asString(), color = MaterialTheme.colorScheme.error)
+                } else BookList(
                   modifier = Modifier.fillMaxSize(),
-                  scrollState = lazyListStateFavorite,
-                  books = state.favoriteBooks,
+                  scrollState = lazyListStateSearch,
+                  books = state.searchResults,
                   onBookClick = {
                     onActions(BookListActions.OnBookClick(it))
                   },
                 )
+              }
+
+              1 -> {
+                if (state.isLoading) CircularProgressIndicator()
+                if (state.searchResults.isEmpty()) Text(stringResource(Res.string.no_favorite_found))
+                if (state.errorMessage != null) {
+                  Text(state.errorMessage.asString(), color = MaterialTheme.colorScheme.error)
+                } else {
+                  BookList(
+                    modifier = Modifier.fillMaxSize(),
+                    scrollState = lazyListStateFavorite,
+                    books = state.favoriteBooks,
+                    onBookClick = {
+                      onActions(BookListActions.OnBookClick(it))
+                    },
+                  )
+                }
               }
             }
           }
@@ -176,23 +180,26 @@ private fun BookListScreen(
   }
 }
 
-val demoBooks: MutableList<Book> by lazy {
-  emptyList<Book>().toMutableStateList().apply {
-    for (i in 1..10) {
-      add(
-        Book(
-          id = i.toString(),
-          title = "Book $i",
-          authors = listOf<String>("Author $i"),
-          imageUrl = "http://test.com",
-        )
-      )
-    }
-  }
-}
 
 @Preview
 @Composable
 fun BookListScreenPreview() {
+
+  val demoBooks: MutableList<Book> by lazy {
+    emptyList<Book>().toMutableStateList().apply {
+      for (i in 1..10) {
+        add(
+          Book(
+            id = i.toString(),
+            title = "Book $i",
+            authors = listOf<String>("Author $i"),
+            imageUrl = "http://test.com",
+            averageRating = 4.5
+          )
+        )
+      }
+    }
+  }
+
   BookListScreen(state = BookListState(searchResults = demoBooks), onActions = {})
 }
