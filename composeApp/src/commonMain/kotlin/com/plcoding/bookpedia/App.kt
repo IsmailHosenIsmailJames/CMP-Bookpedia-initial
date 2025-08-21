@@ -13,21 +13,41 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.compose_multiplatform
+import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.book.presentation.book_list.BookListScreenRoot
 import com.plcoding.bookpedia.book.presentation.book_list.BookListViewModel
+import kotlinx.serialization.Serializable
 
 @Composable
 @Preview
 fun App() {
   MaterialTheme {
+
     BookListScreenRoot(
       viewModel = remember{ BookListViewModel() },
       onBookClick = { }
     )
   }
 }
+
+@Composable
+fun MyAppNav(navController: NavHostController){
+  NavHost(navController = navController, ){
+    composable
+  }
+}
+
+@Serializable
+object BookSearchNav
+
+@Serializable
+data class BookViewNav(val book: Book)
+
