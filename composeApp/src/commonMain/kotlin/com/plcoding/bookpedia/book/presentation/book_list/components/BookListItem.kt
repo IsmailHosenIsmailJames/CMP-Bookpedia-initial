@@ -66,6 +66,7 @@ fun BookListItem(book: Book, onBookClick: (book: Book) -> Unit, modifier: Modifi
       verticalAlignment = Alignment.CenterVertically
     ) {
       Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier.height(100.dp)
       ) {
         var imageLoadResult by remember {

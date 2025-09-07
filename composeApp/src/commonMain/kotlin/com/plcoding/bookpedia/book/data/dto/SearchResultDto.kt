@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchResultDto(
-  @SerialName("docs") val searchedBooks: List<SearchResultDto>
+  @SerialName("docs") val searchedBooks: List<SearchedBookDto>
 )
